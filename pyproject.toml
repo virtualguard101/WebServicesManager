@@ -1,9 +1,23 @@
 [project]
 name = "WebServicesManager"
 version = "0.1.0"
+authors = [
+  { name="virtualguard101", email="virtualguard101@gmail.com"}
+]
 description = "A template for web services management."
 readme = "README.md"
 requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+
 dependencies = [
     "colorlog==6.9.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/virtualguard101/WebServicesManager"
+Issues = "https://github.com/virtualguard101/WebServicesManager/issues"
