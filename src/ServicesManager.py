@@ -4,7 +4,7 @@ import os
 import logging
 import colorlog
 
-# init color log
+# Initialize color logging
 handler = colorlog.StreamHandler()
 handler.setFormatter(colorlog.ColoredFormatter(
     '%(log_color)s%(asctime)s - %(levelname)s - %(message)s',
@@ -37,12 +37,12 @@ def get_operation():
 
 
 class Service:
-    """A template of web services 
+    """A template management for web services
 
     Attributes:
         tag (str): The tag that marks the service instance to use which way to deploy.
         name (str): The name of the service instance.
-        dir (str): The configuration & data directory of the service instance.
+        dir (str): The configuration and data directory of the service instance.
     """
 
     def __init__(self, tag: str, name: str, dir=None):
@@ -51,7 +51,7 @@ class Service:
         self.dir = dir
 
     def command_gen(self):
-        """Generate service management commands according to the service's tag.
+        """Generate service management commands based on the service's tag.
 
         """
 
@@ -65,7 +65,7 @@ class Service:
             raise ValueError(f"The service tag {self.tag} was not included.")
 
     def manage_service(self):
-        """Manage the service based on user input in English.
+        """Manage the service based on user input.
 
         """
 
@@ -86,7 +86,7 @@ class Service:
             full_command = f"{command} restart {self.name}"
             logger.info(f"Restarting service: {self.name}")
         else:
-            logger.warning("Invalid operation, no service management executed.")
+            logger.warning("Invalid operation; no service management executed.")
             return  # Exit if the operation is invalid
         
         if full_command:  # Ensure full_command is defined
@@ -96,7 +96,7 @@ class Service:
             except subprocess.CalledProcessError as e:
                 logger.error(f"Failed to manage service {self.name}: {e}")
 
-# 示例调用
+# Example call
 if __name__ == "__main__":
     service = Service(tag="sys", name="nginx")
     service.manage_service()
