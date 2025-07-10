@@ -24,7 +24,7 @@ logger.addHandler(handler)
 
 def get_operation():
     while True:
-        choice = input("请选择操作 (0 停止, 1 重启, q 退出): ").strip().lower()
+        choice = input("Please select an operation (0 to stop, 1 to restart, q to quit): ").strip().lower()
         if choice == 'q':
             return 'q'
         try:
@@ -33,27 +33,28 @@ def get_operation():
                 return op
         except ValueError:
             pass
-        logger.warning("无效输入，请输入 0、1 或 q。")
+        logger.warning("Invalid input, please enter 0, 1, or q.")
 
 
 class Service:
-    """A template of webservices 
+    """A template of web services 
 
     Attributes:
-        tag (str): The tag that mark the service instance use which way to deploy.
+        tag (str): The tag that marks the service instance to use which way to deploy.
         name (str): The name of the service instance.
         dir (str): The configuration & data directory of the service instance.
     """
 
-    def __init__(self, tag: str, name: str, dir: str):
+    def __init__(self, tag: str, name: str, dir=None):
         self.tag = tag
         self.name = name
         self.dir = dir
 
     def command_gen(self):
-        """Generate services's management commands according to services's tag
+        """Generate service management commands according to the service's tag.
 
         """
+
         system_services_command = "sudo systemctl"
         docker_services_command = f"cd {os.path.expanduser(f'{self.dir}')} && docker compose"
         if self.tag == "sys":
@@ -61,4 +62,41 @@ class Service:
         elif self.tag == "docker":
             return docker_services_command
         else:
-            raise ValueError("The service tag {self.tag} was not included")
+            raise ValueError(f"The service tag {self.tag} was not included.")
+
+    def manage_service(self):
+        """Manage the service based on user input in English.
+
+        """
+
+        operation = get_operation()
+        if operation == 'q':
+            logger.info("User chose to quit the service management.")
+            return
+        
+        command = self.command_gen()
+        full_command = None  # Initialize full_command
+        
+        if operation == 0:
+            # Stop the service
+            full_command = f"{command} stop {self.name}"
+            logger.info(f"Stopping service: {self.name}")
+        elif operation == 1:
+            # Restart the service
+            full_command = f"{command} restart {self.name}"
+            logger.info(f"Restarting service: {self.name}")
+        else:
+            logger.warning("Invalid operation, no service management executed.")
+            return  # Exit if the operation is invalid
+        
+        if full_command:  # Ensure full_command is defined
+            try:
+                subprocess.run(full_command, check=True, shell=True)
+                logger.info(f"Service {self.name} operation completed successfully.")
+            except subprocess.CalledProcessError as e:
+                logger.error(f"Failed to manage service {self.name}: {e}")
+
+# 示例调用
+if __name__ == "__main__":
+    service = Service(tag="sys", name="nginx")
+    service.manage_service()
