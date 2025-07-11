@@ -7,21 +7,21 @@ from src.manager import ServiceFactory, ServiceRepository, Manager
 from src.services import DockerServiceStrategy, SystemServiceStrategy
 
 def main():
-    parser = argparse.ArgumentParser(description="服务管理工具")
+    parser = argparse.ArgumentParser(description="=====> Web Services Manager <=====")
     subparsers = parser.add_subparsers(dest="command", required=True)
     
     # 注册服务命令
-    register_parser = subparsers.add_parser("register", help="注册新服务")
-    register_parser.add_argument("tag", choices=["sys", "docker"], help="服务类型")
-    register_parser.add_argument("name", help="服务名称")
-    register_parser.add_argument("--path", help="Docker服务路径（仅docker类型需要）")
+    register_parser = subparsers.add_parser("register", help="Register a new service")
+    register_parser.add_argument("tag", choices=["sys", "docker"], help="Tag of the service")
+    register_parser.add_argument("name", help="Name of the service")
+    register_parser.add_argument("--path", help="Config/Data path of the service where the 'docker-compose.yml' located (docker-based services only)")
     
     # 列出服务命令
-    subparsers.add_parser("list", help="列出所有服务")
+    subparsers.add_parser("list", help="List all services")
     
     # 执行操作命令
-    operate_parser = subparsers.add_parser("operate", help="执行服务操作")
-    operate_parser.add_argument("index", type=int, help="服务索引")
+    operate_parser = subparsers.add_parser("operate", help="Service operations to carry out")
+    operate_parser.add_argument("index", type=int, help="Index of the service, which is a integer")
     
     args = parser.parse_args()
     
@@ -34,7 +34,7 @@ def main():
     if args.command == "register":
         # 创建服务
         service = manager.register_service(args.tag, args.name, args.path)
-        print(f"服务注册成功: {service.name}")
+        print(f"Register a new service successfully: {service.name}")
         
     elif args.command == "list":
         # 列出所有服务
@@ -46,11 +46,11 @@ def main():
         # 执行服务操作
         try:
             manager.execute_service_operation(args.index)
-            print("操作执行成功")
+            print("Operation success!")
         except IndexError:
-            print("错误：无效的服务索引")
+            print("Error: invalid index")
         except Exception as e:
-            print(f"操作失败: {str(e)}")
+            print(f"Operation failed: {str(e)}")
 
 if __name__ == "__main__":
     main()

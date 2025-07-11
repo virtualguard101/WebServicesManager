@@ -151,6 +151,8 @@ class Manager:
             logger.error(f"Service registration failed: {str(e)}")
             raise
 
+    # TODO: Add the function that can remove services
+
     def list_services(self) -> List[Service]:
         """List all registered services.
         
