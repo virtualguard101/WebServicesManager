@@ -142,5 +142,21 @@ class TestServiceOperation(unittest.TestCase):
         mock_info.assert_any_call("Executing: sudo systemctl stop nginx")
         mock_info.assert_any_call("Service nginx operation completed")
 
+    @patch("src.services.DockerServiceStrategy.execute")
+    @patch("src.services.DockerServiceStrategy.generate_command", return_value=["docker", "compose", "down"])
+    @patch("src.services.get_operation", return_value=0)
+    @patch("src.services.logger.info")
+    def test_docker_service_operation(self, mock_info, mock_get_operation, mock_generate, mock_execute):
+        """测试Docker服务操作流程"""
+        service = Service(tag="docker", name="homepage", path="/path/to/docker")
+        service.service_operation()
+        
+        # 验证调用
+        mock_get_operation.assert_called_once()
+        mock_generate.assert_called_with(0, "homepage", "/path/to/docker")
+        mock_execute.assert_called_with(["docker", "compose", "down"])
+        mock_info.assert_any_call("Executing: docker compose down")
+        mock_info.assert_any_call("Service homepage operation completed")
+
 if __name__ == "__main__":
     unittest.main()

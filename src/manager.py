@@ -23,6 +23,8 @@ handler.setFormatter(colorlog.ColoredFormatter(
 logger = colorlog.getLogger(__name__)
 logger.setLevel(logging.INFO)
 logger.addHandler(handler)
+
+
 class ServiceFactory:
     """Factory for creating Service instances based on tag.
     
@@ -183,6 +185,7 @@ class Manager:
         """
         services = self.list_services()
         if index < 0 or index >= len(services):
+            logger.error(f"Invalid service index: {index}")
             raise IndexError(f"Invalid service index: {index}")
             
         service = services[index]

@@ -141,7 +141,8 @@ class TestManager(unittest.TestCase):
             with self.assertRaises(IndexError):
                 manager.execute_service_operation(0)
                 
-        mock_logger.error.assert_called()
+        # 验证错误日志记录
+        mock_logger.error.assert_called_with("Invalid service index: 0")
             
 
 if __name__ == "__main__":

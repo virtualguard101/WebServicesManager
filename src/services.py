@@ -165,20 +165,21 @@ class Service:
             "path": self.path
         }
 
-    def service_operation(self, operation_getter: Callable[[], Optional[int]] = get_operation) -> None:
+    def service_operation(self) -> None:
         """Perform service operation based on user input.
         
-        Args:
-            operation_getter: Function to get operation choice
         """
-        operation = operation_getter()
+        operation = get_operation()
         if operation is None:
             logger.info("Operation cancelled by user")
             return
         
         try:
             # Generate and execute command
-            command = self.strategy.generate_command(operation, self.name, self.path)
+            if self.path is not None:
+                command = self.strategy.generate_command(operation, self.name, self.path)
+            else:
+                command = self.strategy.generate_command(operation, self.name)
             logger.info(f"Executing: {' '.join(command)}")
             self.strategy.execute(command)
             logger.info(f"Service {self.name} operation completed")
