@@ -72,6 +72,8 @@ class Manager:
         self.append_service(service_instance=service)
         return service
 
+        # TODO: Add the feature which can store the registered services into a JSON file.
+
     def list_services(self) -> None:
         """Method use for count the num of service instances and list the names of them.
 
@@ -80,6 +82,6 @@ class Manager:
         sum_of_service = 0
         service_name_list = []
         for services in self.services_list:
-            service_name_list.append(services.name)
+            service_name_list.append(services._name)
             sum_of_service += 1
         logger.info(f"The manager has registered {sum_of_service} services: {', '.join(service_name_list)}")

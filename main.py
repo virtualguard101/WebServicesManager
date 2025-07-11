@@ -62,7 +62,7 @@ def main_menu():
                 continue
             while True:
                 logger.info(f"=====> Exsist Services Management <=====")
-                service_code = 0
+                service_code = 1
                 for service in service_manager.services_list:
                     logger.info(f"=====> {service_code}: {service._name}")
                     service_code += 1
