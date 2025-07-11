@@ -126,23 +126,19 @@ class TestServiceOperation(unittest.TestCase):
         self.assertEqual(result, 0)
         mock_warning.assert_called()
 
-    @patch("src.services.get_operation", return_value=0)
+    @patch("src.services.SystemServiceStrategy.execute")
     @patch("src.services.SystemServiceStrategy.generate_command", return_value=["sudo", "systemctl", "stop", "nginx"])
-    @patch("src.services.SystemServiceStrategy.execute")
-    @patch("src.services.logger.info")
-    @patch("src.services.SystemServiceStrategy.execute")
-    @patch("src.services.SystemServiceStrategy.generate_command")
     @patch("src.services.get_operation", return_value=0)
-    def test_service_operation(self, mock_get_operation, mock_generate, mock_execute, mock_info):
+    @patch("src.services.logger.info")
+    def test_service_operation(self, mock_info, mock_get_operation, mock_generate, mock_execute):
         """测试服务操作流程"""
         service = Service(tag="sys", name="nginx")
         service.service_operation()
         
-        # 修复：generate_command 需要 self 参数
-        mock_generate.assert_called_with(0, "nginx", None)
+        # 验证调用
+        mock_get_operation.assert_called_once()
+        mock_generate.assert_called_with(0, "nginx")
         mock_execute.assert_called_with(["sudo", "systemctl", "stop", "nginx"])
-        mock_info.assert_any_call("Executing: sudo systemctl stop nginx")
-        mock_info.assert_any_call("Service nginx operation completed")
         mock_info.assert_any_call("Executing: sudo systemctl stop nginx")
         mock_info.assert_any_call("Service nginx operation completed")
 

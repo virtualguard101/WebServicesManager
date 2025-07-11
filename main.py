@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 from src.manager import ServiceFactory, ServiceRepository, Manager
 from src.services import DockerServiceStrategy, SystemServiceStrategy
 
@@ -25,7 +26,9 @@ def main():
     args = parser.parse_args()
     
     # 初始化仓库和管理器
-    repo = ServiceRepository("services.json")
+    # 确保 data 目录存在
+    os.makedirs("data", exist_ok=True)
+    repo = ServiceRepository("data/services.json")
     manager = Manager(repo)
     
     if args.command == "register":

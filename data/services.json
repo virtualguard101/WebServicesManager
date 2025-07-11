@@ -1,0 +1,12 @@
+[
+    {
+        "tag": "sys",
+        "name": "nginx",
+        "path": null
+    },
+    {
+        "tag": "docker",
+        "name": "homepage",
+        "path": "/home/virtualguard/projects/webservices/homepage"
+    }
+]

@@ -22,7 +22,10 @@ class TestServiceFactory(unittest.TestCase):
 class TestServiceRepository(unittest.TestCase):
     def setUp(self):
         self.temp_dir = tempfile.TemporaryDirectory()
-        self.repo_path = os.path.join(self.temp_dir.name, "services.json")
+        # 在临时目录下创建 data 子目录
+        data_dir = os.path.join(self.temp_dir.name, "data")
+        os.makedirs(data_dir, exist_ok=True)
+        self.repo_path = os.path.join(data_dir, "services.json")
         self.repo = ServiceRepository(self.repo_path)
 
     def tearDown(self):

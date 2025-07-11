@@ -59,8 +59,12 @@ class ServiceRepository:
 
     """
     
-    def __init__(self, file_path: str = '../data/services.json'):
+    def __init__(self, file_path: str = 'data/services.json'):
         self.file_path = file_path
+        # 确保目录存在
+        dir_path = os.path.dirname(file_path)
+        if dir_path:
+            os.makedirs(dir_path, exist_ok=True)
         
     def save(self, service: Service) -> None:
         """Save a service to the repository.
