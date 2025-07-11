@@ -41,9 +41,9 @@ class Service:
     """A template management for web services
 
     Attributes:
-        tag ('sys' | 'docker'): The tag that marks the service instance to use which way to deploy.
-        name (str): The name of the service instance.
-        path (str): The configuration and data path of the service instance.
+        _tag ('sys' | 'docker'): The tag that marks the service instance to use which way to deploy.
+        _name (str): The name of the service instance.
+        _path (str): The configuration and data path of the service instance.
     """
 
     def __init__(self, tag: str, name: str, path=None):

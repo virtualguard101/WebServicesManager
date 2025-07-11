@@ -47,7 +47,7 @@ class Manager:
         """
         self.services_list.append(service_instance)
 
-    def register_service(self, service_tag: str, service_name: str, service_path: str) -> Service:
+    def register_service(self, service_tag: str, service_name: str, service_path=None) -> Service:
         """Register a new service.
 
         Args:
@@ -58,7 +58,9 @@ class Manager:
         Returns:
             service: A web service instance.
         """
+
         if service_tag == "docker":
+            assert service_path != None, """Can not leave a empty path while you register a docker-deploy service."""
             if not os.path.exists(service_path):
                 raise ValueError(f"Invalid service path: {service_path}")
             service = Service(tag=service_tag, name=service_name, path=service_path)
