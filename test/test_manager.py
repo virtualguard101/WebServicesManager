@@ -106,6 +106,7 @@ class TestManager(unittest.TestCase):
         self.assertEqual(services[0].name, "nginx")
         self.assertEqual(services[1].name, "postgres")
         
+    @patch("src.manager.ServiceRepository")
     @patch("src.manager.Service")
     @patch("src.services.get_operation", return_value=1)
     def test_execute_service_operation(self, mock_get_operation, mock_service, mock_repo):
@@ -129,8 +130,9 @@ class TestManager(unittest.TestCase):
         with self.assertRaises(ValueError):
             manager.register_service("invalid", "invalid_service")
             
+    @patch("src.manager.ServiceRepository")
     @patch("src.manager.logger")
-    def test_execute_service_operation_invalid_index(self, mock_repo, mock_logger):
+    def test_execute_service_operation_invalid_index(self, mock_logger, mock_repo):
         """测试无效服务索引"""
         manager = Manager(mock_repo.return_value)
         
