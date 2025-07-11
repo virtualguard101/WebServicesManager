@@ -72,7 +72,7 @@ class Manager:
         self.append_service(service_instance=service)
         return service
 
-        # TODO: Add the feature which can store the registered services into a JSON file.
+        # TODO: Add the feature which can store the registered services into a JSON file whose path with ./data/services.json.
 
     def list_services(self) -> None:
         """Method use for count the num of service instances and list the names of them.
