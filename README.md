@@ -24,7 +24,7 @@
 - Launch the manager with `main.py`
 
   >[!IMPORTANT]
-  >If you have some reasons have to waste using uv, you should create virtual environment and install the dependencies manually, otherwise, it is recommended to use uv to manage those because of its convenience.
+  >If you have some reasons have to give up using uv, you should create virtual environment and install the dependencies manually, otherwise, it is recommended to use uv to manage those because of its convenience.
 
   ```bash
   uv run main.py
