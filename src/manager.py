@@ -192,15 +192,20 @@ class Manager:
             logger.error(f"Service registration failed: {str(e)}")
             raise
 
-    def remove_service(self, service_name: str) -> None:
-        """Remove a service by name.
+    def remove_service(self, index: int) -> None:
+        """Remove a service by index.
         
         Args:
-            service_name: Name of the service to remove
+            index: Index of the service to remove
             
         Raises:
+            IndexError: If index is out of bounds
             ValueError: If service not found
         """
+        services = self.list_services()
+        if index < 0 or index >= len(services):
+            raise IndexError(f"Invalid service index: {index}")
+        service_name = services[index].name
         self.repository.remove(service_name)
 
     def list_services(self) -> List[Service]:
@@ -251,14 +256,14 @@ if __name__ == "__main__":
         test_service = manager.register_service("sys", "test-service")
         print("Registered test service")
         
-        # 移除测试服务
-        manager.remove_service("test-service")
+        # 移除测试服务（索引0）
+        manager.remove_service(0)
         print("Successfully removed test service")
         
-        # 尝试移除不存在的服务
+        # 尝试移除不存在的服务（索引越界）
         try:
-            manager.remove_service("non-existent")
-        except ValueError as e:
+            manager.remove_service(100)
+        except IndexError as e:
             print(f"Expected error: {str(e)}")
             
     except Exception as e:

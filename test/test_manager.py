@@ -194,55 +194,96 @@ class TestManager(unittest.TestCase):
     def test_remove_service_success(self, mock_repo):
         """测试正常移除服务"""
         manager = Manager(mock_repo.return_value)
-        service_name = "nginx"
-        
-        # 调用remove_service
-        manager.remove_service(service_name)
+        # 模拟服务列表
+        mock_service = MagicMock()
+        mock_service.name = "nginx"
+        with patch.object(manager, 'list_services', return_value=[mock_service]):
+            manager.remove_service(0)
         
         # 验证ServiceRepository的remove方法被正确调用
-        mock_repo.return_value.remove.assert_called_once_with(service_name)
+        mock_repo.return_value.remove.assert_called_once_with("nginx")
         
     @patch("src.manager.ServiceRepository")
     def test_remove_service_case_insensitive(self, mock_repo):
         """测试大小写不敏感移除"""
         manager = Manager(mock_repo.return_value)
-        
-        # 使用混合大小写
-        manager.remove_service("NgInX")
+        # 模拟服务列表
+        mock_service = MagicMock()
+        mock_service.name = "Nginx"  # 服务名称是大写开头
+        with patch.object(manager, 'list_services', return_value=[mock_service]):
+            # 使用索引0移除
+            manager.remove_service(0)
         
         # 验证调用时使用原始大小写
-        mock_repo.return_value.remove.assert_called_once_with("NgInX")
+        mock_repo.return_value.remove.assert_called_once_with("Nginx")
+        
+    @patch("src.manager.ServiceRepository")
+    def test_remove_service_whitespace(self, mock_repo):
+        """测试移除带空格的服务名"""
+        manager = Manager(mock_repo.return_value)
+        # 模拟服务列表
+        mock_service = MagicMock()
+        mock_service.name = " nginx "  # 服务名带空格
+        with patch.object(manager, 'list_services', return_value=[mock_service]):
+            manager.remove_service(0)
+        
+        # 验证调用时使用原始名称（带空格）
+        mock_repo.return_value.remove.assert_called_once_with(" nginx ")
         
     @patch("src.manager.ServiceRepository")
     def test_remove_service_nonexistent(self, mock_repo):
-        """测试移除不存在的服务"""
-        # 设置remove方法抛出ValueError
-        mock_repo.return_value.remove.side_effect = ValueError("Service not found")
+        """测试索引越界"""
         manager = Manager(mock_repo.return_value)
-        
-        with self.assertRaises(ValueError):
-            manager.remove_service("nonexistent")
+        # 模拟空服务列表
+        with patch.object(manager, 'list_services', return_value=[]):
+            with self.assertRaises(IndexError):
+                manager.remove_service(0)
             
     @patch("src.manager.ServiceRepository")
     def test_remove_service_file_not_found(self, mock_repo):
         """测试文件不存在时的错误处理"""
+        manager = Manager(mock_repo.return_value)
+        # 模拟服务列表
+        mock_service = MagicMock()
+        mock_service.name = "nginx"
         # 设置remove方法抛出FileNotFoundError
         mock_repo.return_value.remove.side_effect = FileNotFoundError
-        manager = Manager(mock_repo.return_value)
         
-        with self.assertRaises(FileNotFoundError):
-            manager.remove_service("nginx")
+        with patch.object(manager, 'list_services', return_value=[mock_service]):
+            with self.assertRaises(FileNotFoundError):
+                manager.remove_service(0)
             
     @patch("src.manager.ServiceRepository")
     def test_remove_service_invalid_json(self, mock_repo):
         """测试无效JSON文件时的异常处理"""
+        manager = Manager(mock_repo.return_value)
+        # 模拟服务列表
+        mock_service = MagicMock()
+        mock_service.name = "nginx"
         # 设置remove方法抛出JSONDecodeError
         mock_repo.return_value.remove.side_effect = json.JSONDecodeError("Expecting value", "", 0)
-        manager = Manager(mock_repo.return_value)
         
-        with self.assertRaises(json.JSONDecodeError):
-            manager.remove_service("nginx")
-            
+        with patch.object(manager, 'list_services', return_value=[mock_service]):
+            with self.assertRaises(json.JSONDecodeError):
+                manager.remove_service(0)
+                
+    @patch("src.manager.ServiceRepository")
+    def test_remove_service_invalid_index(self, mock_repo):
+        """测试无效索引"""
+        manager = Manager(mock_repo.return_value)
+        # 模拟服务列表
+        mock_service = MagicMock()
+        mock_service.name = "nginx"
+        
+        # 测试负索引
+        with patch.object(manager, 'list_services', return_value=[mock_service]):
+            with self.assertRaises(IndexError):
+                manager.remove_service(-1)
+                
+        # 测试超出范围的索引
+        with patch.object(manager, 'list_services', return_value=[mock_service]):
+            with self.assertRaises(IndexError):
+                manager.remove_service(1)
     @patch("src.manager.ServiceRepository")
     @patch("src.manager.logger")
     def test_execute_service_operation_invalid_index(self, mock_logger, mock_repo):
