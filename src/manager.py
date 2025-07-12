@@ -63,7 +63,7 @@ class ServiceRepository:
     
     def __init__(self, file_path: str = 'data/services.json'):
         self.file_path = file_path
-        # 确保目录存在
+        # Make sure the path has existed
         dir_path = os.path.dirname(file_path)
         if dir_path:
             os.makedirs(dir_path, exist_ok=True)
@@ -100,6 +100,47 @@ class ServiceRepository:
                 return []
         logger.info("Service repository file not found, starting fresh")
         return []
+        
+    def remove(self, service_name: str) -> None:
+        """Remove a service by name.
+        
+        Args:
+            service_name: Name of the service to remove
+            
+        Raises:
+            ValueError: If service not found
+        """
+        try:
+            # Load all servives
+            services = self.load_all()
+            
+            # Search for matching services (case insensitive)
+            original_count = len(services)
+            services = [s for s in services
+                       if s['name'].strip().lower() != service_name.strip().lower()]
+            
+            # Check and remove
+            if len(services) == original_count:
+                raise ValueError(f"Service '{service_name}' not found")
+            
+            # Update services,json
+            with open(self.file_path, 'w') as file:
+                json.dump(services, file, indent=4)
+                
+            logger.info(f"Removed service: {service_name}")
+            
+        except FileNotFoundError:
+            logger.warning("Services file not found, nothing to remove")
+            raise ValueError("Services file does not exist")
+        except json.JSONDecodeError:
+            logger.error("Invalid JSON format in services file")
+            raise ValueError("Invalid services data format")
+        except PermissionError:
+            logger.error("Permission denied when writing services file")
+            raise
+        except Exception as e:
+            logger.error(f"Error removing service: {str(e)}")
+            raise
 
 
 class Manager:
@@ -151,7 +192,16 @@ class Manager:
             logger.error(f"Service registration failed: {str(e)}")
             raise
 
-    # TODO: Add the function that can remove services
+    def remove_service(self, service_name: str) -> None:
+        """Remove a service by name.
+        
+        Args:
+            service_name: Name of the service to remove
+            
+        Raises:
+            ValueError: If service not found
+        """
+        self.repository.remove(service_name)
 
     def list_services(self) -> List[Service]:
         """List all registered services.
@@ -192,3 +242,24 @@ class Manager:
             
         service = services[index]
         service.service_operation()
+
+if __name__ == "__main__":
+    # 测试服务移除功能
+    manager = Manager()
+    try:
+        # 注册测试服务
+        test_service = manager.register_service("sys", "test-service")
+        print("Registered test service")
+        
+        # 移除测试服务
+        manager.remove_service("test-service")
+        print("Successfully removed test service")
+        
+        # 尝试移除不存在的服务
+        try:
+            manager.remove_service("non-existent")
+        except ValueError as e:
+            print(f"Expected error: {str(e)}")
+            
+    except Exception as e:
+        print(f"Test failed: {str(e)}")

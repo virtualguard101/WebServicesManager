@@ -23,6 +23,10 @@ def main():
     operate_parser = subparsers.add_parser("operate", help="Service operations to carry out")
     operate_parser.add_argument("index", type=int, help="Index of the service, which is a integer")
     
+    # 移除服务命令
+    remove_parser = subparsers.add_parser("remove", help="Remove a service")
+    remove_parser.add_argument("index", type=int, help="Index of the service to remove")
+    
     args = parser.parse_args()
     
     # 初始化仓库和管理器
@@ -51,6 +55,15 @@ def main():
             print("Error: invalid index")
         except Exception as e:
             print(f"Operation failed: {str(e)}")
+            
+    elif args.command == "remove":
+        try:
+            manager.remove_service(args.index)
+            print(f"Service at index {args.index} removed successfully")
+        except IndexError:
+            print("Error: invalid index")
+        except Exception as e:
+            print(f"Remove failed: {str(e)}")
 
 if __name__ == "__main__":
     main()

@@ -49,4 +49,6 @@
 
 ## TODO
 
-- [ ] Add the function that can remove services
+- [x] Add the function that can remove services
+
+- [ ] Package src as a module
